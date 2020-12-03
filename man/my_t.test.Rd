@@ -33,4 +33,4 @@ tdata <- rnorm(1000, 1, 1)
 my_t.test(tdata, mu = 1, alternative = "greater")
 
 }
-\keyword{t.test}
+\keyword{inference}

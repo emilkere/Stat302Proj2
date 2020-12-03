@@ -30,4 +30,4 @@ my_lm(mpg ~ hp + wt - 1, mtcars)
 my_lm(mpg ~ hp * wt, mtcars)
 
 }
-\keyword{lm}
+\keyword{inference}
