@@ -8,7 +8,7 @@
 #'      defaults to \code{"two.sided"}.
 #' @param mu Numeric input indicating the null hypothesis value of the mean,
 #'      defaults to 0.
-#' @keywords t.test
+#' @keywords inference
 #'
 #' @return A list with the following elements: \code{test_stat} representing
 #'   the numeric test statistic, \code{df} representing the degrees

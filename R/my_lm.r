@@ -5,7 +5,7 @@
 #' @param formula An object of class \code{formula} which is a symbolic description
 #'    of the model to be fitted.
 #' @param df A data frame containing the variables used in the model.
-#' @keywords lm
+#' @keywords inference
 #'
 #' @return A table with rows for each coefficient (including the Intercept)
 #'   and columns for the Estimate, Std. Error, t value, and Pr(>|t|).
@@ -22,6 +22,14 @@
 #'
 #' @export
 my_lm <- function(formula, df) {
+  # validate input parameters
+  if (!is.object(formula)) {
+    stop("Argument formula must be an object of type formula.")
+  }
+  if (!is.data.frame(df)) {
+    stop("Argument df must be data frame.")
+  }
+
   X <- model.matrix(formula, df)
   Y <- model.response(model.frame(formula, df))
 
