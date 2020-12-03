@@ -1,0 +1,14 @@
+Package: Stat302Proj2
+Title: What the Package Does (One Line, Title Case)
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Emil",
+           family = "Keremidarski",
+           role = c("aut", "cre"),
+           email = "emilsvetkere@gmail.com")
+Description: This package demonstrates building R package as part of Project 2 for UW Stat302 class.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
