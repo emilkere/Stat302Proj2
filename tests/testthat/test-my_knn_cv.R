@@ -15,16 +15,7 @@ test_that("my_knn_cv fails when length of train and cl do not match", {
   x <- rnorm(n)
   y <- rnorm(n)
   df <- data.frame(x=x, y=y)
-  cl <- sample(c("a", "b", "b"), n+5, replace=T)
-  expect_error(my_knn_cv(df,cl,3,4))
-})
-
-test_that("my_knn_cv fails when length of train and cl do not match", {
-  n <- 10
-  x <- rnorm(n)
-  y <- rnorm(n)
-  df <- data.frame(x=x, y=y)
-  cl <- sample(c("a", "b", "b"), n+5, replace=T)
+  cl <- as.factor(sample(c("a", "b", "b"), n+5, replace=T))
   expect_error(my_knn_cv(df,cl,3,4))
 })
 
