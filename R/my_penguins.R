@@ -1,3 +1,7 @@
+#' my_penguins Data
+#'
+#' Copy of penguin data from palmerpenguins package, used for demo purposes in Stat302 Project2.
+#'
 #' Size measurements for adult foraging penguins near Palmer Station, Antarctica
 #'
 #' Includes measurements for penguin species, island in Palmer Archipelago,

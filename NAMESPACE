@@ -2,3 +2,4 @@
 
 export(my_lm)
 export(my_t.test)
+importFrom(tibble,tibble)

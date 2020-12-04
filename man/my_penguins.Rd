@@ -3,7 +3,7 @@
 \docType{data}
 \name{my_penguins}
 \alias{my_penguins}
-\title{Size measurements for adult foraging penguins near Palmer Station, Antarctica}
+\title{my_penguins Data}
 \format{
 A tibble with 344 rows and 8 variables:
 \describe{
@@ -30,6 +30,11 @@ A tibble with 344 rows and 8 variables:
 my_penguins
 }
 \description{
+Copy of penguin data from palmerpenguins package, used for demo purposes in Stat302 Project2.
+}
+\details{
+Size measurements for adult foraging penguins near Palmer Station, Antarctica
+
 Includes measurements for penguin species, island in Palmer Archipelago,
 size (flipper length, body mass, bill dimensions), and sex.
 This data and documentation come from the \code{palmerpenguins} package,
