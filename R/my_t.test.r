@@ -24,7 +24,6 @@
 #'
 #' @export
 my_t.test <- function(x, alternative = "two.sided", mu = 0) {
-  require(stringr)
   # validate input
   alternative <- str_to_lower(alternative)
   alt_opptions <- c("two.sided", "less", "greater")

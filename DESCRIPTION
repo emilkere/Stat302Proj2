@@ -10,6 +10,8 @@ Depends:
     stringr,
     tibble,
     class,
+    tidyverse,
+    randomForest,
     R (>= 2.10)
 Description: This package demonstrates building R package as part of Project 2 for UW Stat302 class.
 License: GPL-3
@@ -22,6 +24,5 @@ Suggests:
     covr,
     knitr,
     rmarkdown,
-    dplyr,
-    tidyverse
+    dplyr
 VignetteBuilder: knitr
