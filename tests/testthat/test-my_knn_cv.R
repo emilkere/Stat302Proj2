@@ -1,8 +1,8 @@
-test_that("it fails when train is not data frame", {
+test_that("my_knn_cv fails when train is not data frame", {
   expect_error(my_knn_cv(1,2,3,4))
 })
 
-test_that("it fails when cl is not factor", {
+test_that("my_knn_cv fails when cl is not factor", {
   n <- 10
   x <- rnorm(n)
   y <- rnorm(n)
@@ -10,7 +10,7 @@ test_that("it fails when cl is not factor", {
   expect_error(my_knn_cv(df,x,3,4))
 })
 
-test_that("it fails when length of train and cl do not match", {
+test_that("my_knn_cv fails when length of train and cl do not match", {
   n <- 10
   x <- rnorm(n)
   y <- rnorm(n)
@@ -19,7 +19,7 @@ test_that("it fails when length of train and cl do not match", {
   expect_error(my_knn_cv(df,cl,3,4))
 })
 
-test_that("it fails when length of train and cl do not match", {
+test_that("my_knn_cv fails when length of train and cl do not match", {
   n <- 10
   x <- rnorm(n)
   y <- rnorm(n)
@@ -28,7 +28,7 @@ test_that("it fails when length of train and cl do not match", {
   expect_error(my_knn_cv(df,cl,3,4))
 })
 
-test_that("it fails when number of neighbors is 0", {
+test_that("my_knn_cv fails when number of neighbors is 0", {
   n <- 10
   x <- rnorm(n)
   y <- rnorm(n)
@@ -37,7 +37,7 @@ test_that("it fails when number of neighbors is 0", {
   expect_error(my_knn_cv(df,cl,0,4))
 })
 
-test_that("it fails when number of folds is 1", {
+test_that("my_knn_cv fails when number of folds is 1", {
   n <- 10
   x <- rnorm(n)
   y <- rnorm(n)
@@ -46,7 +46,7 @@ test_that("it fails when number of folds is 1", {
   expect_error(my_knn_cv(df,cl,1,1))
 })
 
-test_that("it fails when number of folds is 1", {
+test_that("my_knn_cv works on give basic sample", {
   n <- 10
   x <- c(1:10)
   y <- 1/x^2
