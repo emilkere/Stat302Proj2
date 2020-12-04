@@ -1,0 +1,20 @@
+---
+title: "Project 2: Stat302Proj2 Tutorial"
+author: "Emil Keremidarski"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Stat302Proj2 Tutorial}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(Stat302Proj2)
+```
