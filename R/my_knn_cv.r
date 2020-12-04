@@ -56,8 +56,8 @@ my_knn_cv <- function(train, cl, k_nn, k_cv) {
     stop("Number of neighbors k_nn needs to be positive.")
   }
 
-  if (k_cv <= 0) {
-    stop("Number of folds for cross validation needs to be positive.")
+  if (k_cv <= 1) {
+    stop("Number of folds for cross validation needs to be bigger than 1.")
   }
 
   # generate random folds

@@ -18,7 +18,7 @@ devtools::install_github("emilkere/Stat302Proj2")
 library(Stat302Proj2)
 ```
 
-## Usage
+## Use
 
 The vignette demonstrates example usage of all main functions. You can see the vignette by using the following code:
 
