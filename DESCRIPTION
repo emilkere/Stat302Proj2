@@ -6,7 +6,9 @@ Authors@R:
            family = "Keremidarski",
            role = c("aut", "cre"),
            email = "emilsvetkere@gmail.com")
-Depends: stringr
+Depends: 
+    stringr,
+    R (>= 2.10)
 Description: This package demonstrates building R package as part of Project 2 for UW Stat302 class.
 License: GPL-3
 Encoding: UTF-8
