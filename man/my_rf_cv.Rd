@@ -20,9 +20,8 @@ This function performs Cross Validation for Random Forest with 100 trees.
 ## performs cross-validation with 5 folds
 my_rf_cv()
 
-## performs cross-validation with n folds
-k_cv = 3
+## performs cross-validation with specified number of folds (e.g. 3)
+k_cv <- 3
 my_rf_cv(k = k_cv)
-
 }
 \keyword{prediction}

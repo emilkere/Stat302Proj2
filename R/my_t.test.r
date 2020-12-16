@@ -21,7 +21,6 @@
 #'
 #' tdata <- rnorm(1000, 1, 1)
 #' my_t.test(tdata, mu = 1, alternative = "greater")
-#'
 #' @export
 my_t.test <- function(x, alternative = "two.sided", mu = 0) {
   # validate input
@@ -43,9 +42,9 @@ my_t.test <- function(x, alternative = "two.sided", mu = 0) {
   df <- sample_size - 1
 
   p_val <- switch(alternative,
-                  two.sided = 2 * pt(abs(t_stat), df, lower.tail = F),
-                  less = pt(t_stat, df, lower.tail = T),
-                  greater = pt(t_stat, df, lower.tail = F)
+    two.sided = 2 * pt(abs(t_stat), df, lower.tail = F),
+    less = pt(t_stat, df, lower.tail = T),
+    greater = pt(t_stat, df, lower.tail = F)
   )
 
   # set up the return list

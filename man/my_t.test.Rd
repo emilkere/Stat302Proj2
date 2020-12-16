@@ -31,6 +31,5 @@ my_t.test(tdata, mu = 5)
 
 tdata <- rnorm(1000, 1, 1)
 my_t.test(tdata, mu = 1, alternative = "greater")
-
 }
 \keyword{inference}

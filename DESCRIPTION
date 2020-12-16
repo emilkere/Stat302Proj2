@@ -24,5 +24,6 @@ Suggests:
     covr,
     knitr,
     rmarkdown,
-    dplyr
+    dplyr,
+    kableExtra
 VignetteBuilder: knitr

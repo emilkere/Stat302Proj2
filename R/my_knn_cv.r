@@ -1,6 +1,7 @@
 #' k-Nearest Neighbour Cross-Validatory Classification
 #'
-#' This function performs k-nearest neighbour cross-validatory classification from training set.
+#' This function performs k-nearest neighbour cross-validatory classification
+#' from training set.
 #'
 #' @param train data frame of the training set cases.
 #' @param cl factor of true classification values for the training data.
@@ -16,8 +17,11 @@
 #' @examples
 #' library(tidyverse)
 #' peng_no_na <- my_penguins %>%
-#'   select(species, bill_length_mm, bill_depth_mm, flipper_length_mm,
-#'   body_mass_g) %>% drop_na()
+#'   select(
+#'     species, bill_length_mm, bill_depth_mm, flipper_length_mm,
+#'     body_mass_g
+#'   ) %>%
+#'   drop_na()
 #'
 #' ## Predict output class species
 #' peng_cl <- peng_no_na$species
@@ -32,10 +36,9 @@
 #' knn_1 <- my_knn_cv(peng_no_na_train, peng_cl, k_nn = 1, k_cv = k_cv)
 #' train_err_1 <- sum(as.integer(knn_1$class) != as.integer(peng_cl)) / len
 #'
-#' ##setup knn with k = 5 and calculate training error
+#' ## setup knn with k = 5 and calculate training error
 #' knn_5 <- my_knn_cv(peng_no_na_train, peng_cl, k_nn = 5, k_cv = k_cv)
 #' train_err_5 <- sum(as.integer(knn_5$class) != as.integer(peng_cl)) / len
-#'
 #' @export
 my_knn_cv <- function(train, cl, k_nn, k_cv) {
   # input validation

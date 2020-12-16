@@ -2,8 +2,8 @@
 #'
 #' This function fits linear model to data passed as a data frame.
 #
-#' @param formula An object of class \code{formula} which is a symbolic description
-#'    of the model to be fitted.
+#' @param formula An object of class \code{formula} which is a symbolic
+#'    description of the model to be fitted.
 #' @param df A data frame containing the variables used in the model.
 #' @keywords inference
 #'
@@ -19,7 +19,6 @@
 #'
 #' ## interaction
 #' my_lm(mpg ~ hp * wt, mtcars)
-#'
 #' @export
 my_lm <- function(formula, df) {
   # validate input parameters

@@ -21,7 +21,8 @@ The main data frame has 1704 rows and 6 variables:
 my_gapminder
 }
 \description{
-Copy of gapminder data from gapminder package used for demo purposes in Stat302 Project2.
+Copy of gapminder data from gapminder package used for demo purposes in
+Stat302 Project2.
 }
 \details{
 Excerpt of the Gapminder data on life expectancy, GDP per capita, and
@@ -39,26 +40,25 @@ plot(lifeExp ~ year, my_gapminder, subset = country == "Cambodia", type = "b")
 plot(lifeExp ~ gdpPercap, my_gapminder, subset = year == 2007, log = "x")
 
 if (require("dplyr")) {
-my_gapminder \%>\%
-  filter(year == 2007) \%>\%
-  group_by(continent) \%>\%
-  summarise(lifeExp = median(lifeExp))
+  my_gapminder \%>\%
+    filter(year == 2007) \%>\%
+    group_by(continent) \%>\%
+    summarise(lifeExp = median(lifeExp))
 
-# how many unique countries does the data contain, by continent?
-my_gapminder \%>\%
-  group_by(continent) \%>\%
-  summarize(n_obs = n(), n_countries = n_distinct(country))
+  # how many unique countries does the data contain, by continent?
+  my_gapminder \%>\%
+    group_by(continent) \%>\%
+    summarize(n_obs = n(), n_countries = n_distinct(country))
   #'
-# by continent, which country experienced the sharpest 5-year drop in
-# life expectancy and what was the drop?
-my_gapminder \%>\%
-  group_by(continent, country) \%>\%
-  select(country, year, continent, lifeExp) \%>\%
-  mutate(le_delta = lifeExp - lag(lifeExp)) \%>\%
-  summarize(worst_le_delta = min(le_delta, na.rm = TRUE)) \%>\%
-  filter(min_rank(worst_le_delta) < 2) \%>\%
-  arrange(worst_le_delta)
+  # by continent, which country experienced the sharpest 5-year drop in
+  # life expectancy and what was the drop?
+  my_gapminder \%>\%
+    group_by(continent, country) \%>\%
+    select(country, year, continent, lifeExp) \%>\%
+    mutate(le_delta = lifeExp - lag(lifeExp)) \%>\%
+    summarize(worst_le_delta = min(le_delta, na.rm = TRUE)) \%>\%
+    filter(min_rank(worst_le_delta) < 2) \%>\%
+    arrange(worst_le_delta)
 }
-
 }
 \keyword{datasets}

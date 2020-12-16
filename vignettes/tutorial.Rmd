@@ -1,5 +1,5 @@
 ---
-title: "Project 2: Stat302Proj2 Tutorial"
+title: "Stat302Proj2 Tutorial"
 author: "Emil Keremidarski"
 output: rmarkdown::html_vignette
 vignette: >
@@ -8,6 +8,11 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+\addtolength{\headheight}{-.025\textheight} 
+\thispagestyle{fancyplain} 
+\renewcommand{\headrulewidth}{0pt}
+
+
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -15,6 +20,439 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+```{r setup, message=F, echo=F}
+library(Stat302Proj2)
+library(tidyverse)
+library(kableExtra)
+```
+## Introduction
+`Stat302Proj2` is an R package for **UW STAT302** Project 2 Part 1. It contains 
+the following functions:
+
+* `my_t.test`
+* `my_lm`
+* `my_knn_cv`
+* `my_rf_cv`
+
+In addition the package includes two data sets `my_penguins`, and `my_gapminder`.
+
+To install this package use the code below:
+```{r eval=F}
+# install.packages("devtools")
+devtools::install_github("emilkere/Stat302Proj2")
 library(Stat302Proj2)
 ```
+##  my_t.test tutorial
+
+`my_t.test` performs Student's t-test on the provided numeric vector. It supports three 
+types of alternative hypotheses - equal, greater and smaller. 
+
+We will demonstrate the usage of `my_t.test` and interpretation of the results
+on `my_gapminder` data set.
+
+To test if average life expectancy is equal to $60$ versus the alternative
+of not equal to $60$
+  \begin{align}
+  H_0: \mu &= 60,\\
+  H_a: \mu &\neq 60.
+  \end{align}
+we use the following code:
+```{r eval=F}
+my_t.test(my_gapminder$lifeExp, "two.sided", 60)
+```
+```{r echo=F}
+t_eq60 <- my_t.test(my_gapminder$lifeExp, "two.sided", 60) # P = 0.09322877
+```
+
+Let's set the p-value cut off to $\alpha = 0.05$. 
+
+Since test p-value is `r round(t_eq60$"p-val", 3)`, which is bigger than $\alpha = 0.05$, we do not have sufficient evidence to reject the null hypothesis.
+
+To test if average life expectancy is $60$ versus the alternative that life
+expectancy is less than $60$
+  \begin{align}
+  H_0: \mu &= 60,\\
+  H_a: \mu &< 60.
+  \end{align}
+we use the following code:
+```{r eval=F}
+my_t.test(my_gapminder$lifeExp, "less", 60)
+```
+```{r echo=F}
+t_less60 <- my_t.test(my_gapminder$lifeExp, "less", 60) # P = 0.04661438
+```
+
+Since test p-value is `r round(t_less60$"p-val", 3)`, which is less than than our pre-determined cut off $\alpha = 0.05$, we reject $H_0$, and have evidence to support the alternternaive hypothesis $H_a$, which is that the average live expectancy is less than $60$.
+
+To test if average life expectancy is $60$ versus the alternative that life
+expectancy is greater than $60$
+  \begin{align}
+  H_0: \mu &= 60,\\
+  H_a: \mu &> 60.
+  \end{align}
+we use the following code:
+```{r eval=F}
+my_t.test(my_gapminder$lifeExp, "greater", 60)
+```
+```{r echo=F}
+t_g60 <- my_t.test(my_gapminder$lifeExp, "greater", 60) # P = 0.9533856
+```
+Since test p-value is `r round(t_g60$"p-val", 3)`, which is bigger than $\alpha = 0.05$, we do not have sufficient evidence to reject the null hypothesis.
+
+## my_lm tutorial
+
+In this tutorial we will demonstrate how to use `my_lm` to fit and analyze regression models,  on `my_gapminder` data set. We will be using `lifeExp` as response variable and `gdpPercap` and `continent` as explanatory variables. 
+
+We start with a simple linear model. The code for the fitting the model and visualizing the results is below:
+```{r fig.width = 7.15, fig.height=6}
+lm_life <- my_lm(lifeExp ~ gdpPercap + continent, my_gapminder)
+lm_matrix <- model.matrix(lifeExp ~ gdpPercap + continent, data = my_gapminder)
+
+# calculate fitted values
+y_hat <- lm_matrix %*% as.matrix(lm_life[, 1])
+
+# calculate residuals
+res <- my_gapminder$lifeExp - y_hat
+
+# calculate standartized residuals
+std_res <- res / sd(res)
+
+# set up data for the plot
+plot_data <- data.frame(
+  "Actual" = my_gapminder$lifeExp, "Fitted" = y_hat,
+  "Continent" = my_gapminder$continent, "gdpPerCap" = my_gapminder$gdpPercap,
+  res = res, std_res
+)
+
+# Plot Actual vs Fitted Values
+plot_data %>% ggplot(aes(
+  x = Fitted, y = Actual, color = Continent, fill =
+    Continent
+)) +
+  geom_point() +
+  geom_abline(
+    slope = 1, intercept = 0,
+    col = "black", lty = 2, size = 1
+  ) +
+  theme_bw(base_size = 12) +
+  labs(
+    x = "Fitted values", y = "Actual values",
+    title = "Actual vs. Fitted",
+    caption = "Graph 1: Scatter plot of Actual vs Fitted values for 
+    Life Expectancy, using linear model: lifeExp ~ gdpPercap + continent.
+    The black line is y=x. Each color represents data for different continent."
+  ) +
+  theme(
+    plot.title = element_text(hjust = 0.5), plot.caption =
+      element_text(hjust = 0.5)
+  )
+```
+
+```{r echo=F}
+# gdpPercap_coef
+gdpPercap_coef <- lm_life[2, 1]
+gdpPercap_p_val <- lm_life[2, 4]
+```
+
+We are investigating the null hypothesis - the linear coefficient in front of `gpdPercap` is $0$ against the alternative hypothesis that the linear coefficientt in front of `gpdPercap` is non-zero.
+
+The coefficient in front of `gdpPercap` from our linear model is `r formatC(gdpPercap_coef,digits=2)`. This suggest that there is positive, albeit weak linear relationship between Life Expectancy and GDP per Capita.
+
+The p-value from our linear model is `r formatC(gdpPercap_p_val,digits=2)`. This is significantly less that our p-value cut off $\alpha = 0.05$. Therefore we can reject the null hypothesis in favor of the alternative. Thus stating that GDP per Capita is statistically significant in predicting life expectancy. 
+
+Graph 1 represents the actual and fitted values for Life Expectancy from the linear model. As it is clear from the graph, the fitted values do not match actual values well, especially for values below $65$. This prompts us examine the residuals and standardized residuals for the model.
+This is done with the code below.
+
+``` {r fig.width = 7.15, fig.height=6}
+plot_data %>% ggplot(aes(x = gdpPerCap, y = std_res, color = Continent)) +
+  geom_point() +
+  geom_abline(
+    slope = 0, intercept = -4, col = "black", lty = 2,
+    size = 1
+  ) +
+  geom_abline(
+    slope = 0, intercept = 4, col = "black", lty = 2,
+    size = 1
+  ) +
+  theme_bw(base_size = 12) +
+  labs(
+    x = "GDP Per Capita",
+    y = "Standartized Residuals",
+    title = "Standartized Residuals over GDP Per Capita",
+    caption = "Graph 2: Scatter plot of Standartized Residuals over GDP Per 
+    Capita, using linear model: lifeExp ~ gdpPercap + continent. 
+    Each color represents data for different continent."
+  ) +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    plot.caption = element_text(hjust = 0.5)
+  )
+```
+
+The standardized residual plot exhibits two characteristics of poor fit:
+
+* there are several standardized residuals with absolute values bigger than $4$. This suggests that the error in the model is not normally distributed.
+* there is logarithmic relationship between the standardized residuals 
+and GDP per Capita.
+
+Those observations prompts us to investigate linear model with logarithmic transformation for GDP per Capita. The code for this model follows:
+```{r fig.width = 7.15, fig.height=6 }
+lm_life <- my_lm(lifeExp ~ log(gdpPercap) + continent, my_gapminder)
+lm_matrix <- model.matrix(lifeExp ~ log(gdpPercap) + continent,
+  data = my_gapminder
+)
+
+# calculate fitted values
+y_hat <- lm_matrix %*% as.matrix(lm_life[, 1])
+
+# calculate residuals
+res <- my_gapminder$lifeExp - y_hat
+
+# calculate standartized residuals
+std_res <- res / sd(res)
+
+# set up data for plot
+plot_data <- data.frame(
+  "Actual" = my_gapminder$lifeExp, "Fitted" = y_hat,
+  "Continent" = my_gapminder$continent, "gdpPerCap" = my_gapminder$gdpPercap,
+  res = res, std_res
+)
+
+# Plot Actual vs Fitted Values
+plot_data %>% ggplot(aes(
+  x = Fitted, y = Actual, color = Continent,
+  fill = Continent
+)) +
+  geom_point() +
+  geom_abline(
+    slope = 1, intercept = 0,
+    col = "black", lty = 2, size = 1
+  ) +
+  theme_bw(base_size = 12) +
+  labs(
+    x = "Fitted values", y = "Actual values", title = "Actual vs. Fitted",
+    caption = "Graph 3: Scatter plot of Actual vs Fitted values for Life 
+    Expectancy, using linear log model:lifeExp ~ log(gdpPercap) + continent.
+    Black line is y=x. Each color represents data for different continent."
+  ) +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    plot.caption = element_text(hjust = 0.5)
+  )
+```
+```{r echo= F}
+# gdpPercap_coef
+gdpPercap_coef <- lm_life[2, 1]
+gdpPercap_p_val <- lm_life[2, 4]
+```
+
+The coefficient in front of `log(gdpPercap)` from this model is `r formatC(gdpPercap_coef,digits=2)`. This suggest that there is positive linear relationship between between Life Expectancy and GDP per Capita - i.e. as GDP per Capit grows, life Expectance grows.
+
+The p-value from our linear logarithmic model is `r formatC(gdpPercap_p_val,digits=2)`. This is less that our p-value cut off $\alpha = 0.05$. Therefore we can reject the null hypothesis in favor of the alternative. There is strong evidence for linear relationship between Life Expectancy and GDP per Capita.
+
+Graph 3 represents the actual and fitted values for Life Expectancy from the linear logarithmic model. It demonstrates good match of fitted data to actual values, with some 
+outliers mostly for `Asia`. We examine the standardized residuals for the model 
+to ensure previous concerns have been addressed.
+
+
+``` {r fig.width = 7.15, fig.height=6 }
+plot_data %>% ggplot(aes(x = log(gdpPerCap), y = std_res, color = Continent)) +
+  geom_point() +
+  geom_abline(
+    slope = 0, intercept = -4, col = "black", lty = 2,
+    size = 1
+  ) +
+  theme_bw(base_size = 12) +
+  labs(
+    x = "Log(GDP per Capita)", y = "Standartized Residuals",
+    title = "Standartized Residuals over Log(GDP Per Capita)",
+    caption = "Graph 4: Standartized Residuals over Log(GDP Per Capita), using 
+  linear log model: lifeExp ~ log(gdpPercap) + continent.
+  Each color represents data for different continent."
+  ) +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    plot.caption = element_text(hjust = 0.5)
+  )
+```
+
+The graph shows that both concerns noted previously about the standardized 
+residuals from the linear model are addressed in the linear log model. 
+
+
+## my_knn_cv tutorial
+
+In this tuturial we will demonstrate `my_knn_cv` usage for assessing k-Nearest Neighbour models with different number of neighbours using cross validation. We will use `my_penguins` data set. 
+
+Our goal is to assess and select model for prediction of `species` using covariates `bill_length_mm`, `bill_depth_mm`, `flipper_length_mm`, and `body_mass_g`.
+
+We will use 5-fold cross-validation.
+
+We will assess ten different k-Nearest Neighbour models, with $k = 1, 2,..,10$ neighbours.
+
+Cross-validation approach implemented in `my_knn_cv` splits the data into specified number of folds - in our demonstartion $5$. Then it uses $k-1$ folds as training data to train a model, and one fold as test data - to assess how well the trained model predicts results from the test data set. This allows us to compare training and test errors from different models, and select best model. The approach is demonstrated in the code snippet below.
+
+```{r, fig.width = 7.15, fig.height=6 }
+# set up 5-fold cross-validation
+k_cv <- 5
+
+# removing NA data from my_penguins since knn does not handle correctly
+
+# using covariates bill_length_mm, bill_depth_mm,
+# flipper_length_mm, and body_mass_g
+
+peng_no_na <- my_penguins %>%
+  select(
+    species, bill_length_mm, bill_depth_mm,
+    flipper_length_mm, body_mass_g
+  ) %>%
+  drop_na()
+
+# setup output class species
+peng_cl <- peng_no_na$species
+
+# set up train data
+peng_no_na_train <- peng_no_na %>% select(-species)
+len <- length(peng_cl)
+
+# set up 10 models 
+n_models <- 10
+knn_cv_err <- rep(0, n_models)
+knn_train_err <- rep(0, n_models)
+
+# set seed to ensure repeatability
+# set.seed(19701007)
+for (k in 1:n_models) {
+  knn_res <- my_knn_cv(peng_no_na_train, peng_cl, k_nn = k, k_cv = k_cv)
+  # store CV error
+  knn_cv_err[k] <- knn_res$cv_err
+  # compute train errror
+  knn_train_err[k] <- sum(as.integer(knn_res$class) !=
+    as.integer(peng_cl)) / len
+}
+
+# prepare plot data for CV error
+knn_plot_data <- data.frame(
+  k_nn = c(1:n_models), error = knn_cv_err,
+  err_type = rep("Cross Validation Error", n_models)
+)
+
+# prepare plot data for CV error for Training error
+knn_plot_data <- rbind(knn_plot_data, data.frame(
+  k_nn = c(1:n_models),
+  error = knn_train_err, err_type = rep("Training Error", n_models)
+))
+
+#plot
+knn_plot_data %>% ggplot(aes(
+  x = as.factor(k_nn), y = error, group = err_type,
+  col = err_type
+)) +
+  geom_line() + geom_point() +
+  scale_x_discrete(name = "number of neighbours") +
+  theme_bw(base_size = 12) +
+  labs(
+    x = "number of neighbours", y = "Error", color = "Error Type",
+    title = "Cross Validation and Traing Error from my_knn_cv",
+    caption = "Graph 5: Cross Validation and Traing Error for fitting knn, with 
+    different number of neighbours, using 5 fold cross validation. The x axis 
+    represent the number of neighbours used in the model. Each line represents 
+    different type of error - cross validation or training error"
+  ) +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    plot.caption = element_text(hjust = 0.5)
+  )
+```
+As seen in the Graph 5 k-Nearest Neighbour with $k=1$ gives with smallest training and cross validation errors. Therefore, we recommend using the model with $k=1$ for this model.
+
+Typically $k=1$ overfits. 
+
+
+
+## my_rf_cv tutorial
+
+In this tutorial we will demonstrate how to use `my_rf_cv` to analyze cross validation error
+by varying the number of folds being used.
+
+We will use `my_penguins` data set. We will assess MSE from Random Forest model with $100$ trees
+for predicting `body_mass_g` using covariates `bill_length_mm`, `bill_depth_mm`, and `flipper_length_mm`.
+
+We are interested in cross validation estimated MSE with different number of folds $k= 2,5$ and $10$. In order to esimate MSE for each $k$, we will run `my_rf_cv` multiple times, and calculate mean and standard deviation of cross validation MSE, for each value of $k$. The code is demonstrated below:   
+
+
+```{r fig.width = 7.15, fig.height=6}
+k_cv <- c(2, 5, 10)
+reps <- 30
+k_cv_len <- length(k_cv)
+
+
+for (k in 1:k_cv_len) {
+  mse_reps <- rep(0, reps)
+  for (i in 1:reps) {
+    mse_reps[i] <- my_rf_cv(k = k_cv[k])
+  }
+  if (!exists("plot_rf_cv_df")) {
+    plot_rf_cv_df <- data.frame(
+      k = rep(k_cv[k], reps),
+      mse = mse_reps, iter = c(1:reps)
+    )
+  }
+  else {
+    plot_rf_cv_df <- rbind(plot_rf_cv_df, data.frame(k = rep(
+      k_cv[k],
+      reps
+    ), mse = mse_reps, iter = c(1:reps)))
+  }
+}
+
+plot_rf_cv_df %>% ggplot(aes(x = as.factor(k), y = mse, group = as.factor(k))) +
+  geom_boxplot(fill = "light blue") +
+  scale_x_discrete(
+    name = "Number of Folds",
+    breaks = as.factor(k_cv), limits = as.factor(k_cv)
+  ) +
+  theme_bw(base_size = 12) +
+  labs(
+    x = "Number of Folds", y = "CV Estimated MSE",
+    title = "CV Estimated MSE for Random Forest with 100 trees",
+    caption = "Graph 6: Box plot of Cross Validation Estimated MSE for 
+    Random Forest with 100 trees with different number of folds. Each boxplot 
+    displays the minimum, first quartile, median, third quartile, and maximum 
+    Cross Validation MSE for the given fold"
+  ) +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    plot.caption = element_text(hjust = 0.5)
+  )
+```
+```{r echo=F }
+kable_df <- plot_rf_cv_df %>%
+  group_by(k) %>%
+  summarise(
+    mean =
+      mean(mse), sd = sd(mse), .groups = "drop"
+  )
+colnames(kable_df) <- c("k", "Mean", "Standard Deviation")
+
+kble <- kable(kable_df,
+  format = "html", table.attr = "style='width:80%;'",
+  caption = paste("Table 1: Mean and Standard deviation of Cross Validation MSE 
+    calculated using different number of folds for Random Forest Model with 
+    100 trees")
+)
+kable_styling(kble, "striped")
+```
+
+```{r echo=F}
+all_samples <- dim(my_penguins)[1]
+test_samples <- trunc(all_samples / k_cv)
+training_samples <- all_samples - test_samples
+
+text_training_samples <- paste(training_samples, collapse = ", ")
+text_test_samples <- paste(test_samples, collapse = ", ")
+```
+
+As can be seen on Graph 7, as well as in Table 1 as the number of folds increases the mean, and the standard deviation of the cross validation estimation for MSE decrease. This is expected, because as the number of folds increases, the number of samples used as training data increases as follows `r text_training_samples`. This should lead to improving model accuracy. At the same time, the number of samples used as test data decreases as follows - `r text_test_samples`. This leads to decreasing error variability, which explains smaller standard deviation.
+
+The difference in mean and standart deviation between $k=5$ and $k=10$ is small, and in some cases it is observed that the mean MSE for $k=5$ is smaller than the the mean MSE for $k=10$. This is indication that additional traing samles does not lead to further improvement of the model beyond the cuff off of `r training_samples[2]`. Therefore we recommend using 5-fold cross validation.

@@ -7,8 +7,8 @@
 my_lm(formula, df)
 }
 \arguments{
-\item{formula}{An object of class \code{formula} which is a symbolic description
-of the model to be fitted.}
+\item{formula}{An object of class \code{formula} which is a symbolic
+description of the model to be fitted.}
 
 \item{df}{A data frame containing the variables used in the model.}
 }
@@ -28,6 +28,5 @@ my_lm(mpg ~ hp + wt - 1, mtcars)
 
 ## interaction
 my_lm(mpg ~ hp * wt, mtcars)
-
 }
 \keyword{inference}

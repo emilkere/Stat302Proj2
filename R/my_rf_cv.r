@@ -13,10 +13,9 @@
 #' ## performs cross-validation with 5 folds
 #' my_rf_cv()
 #'
-#' ## performs cross-validation with n folds
-#' k_cv = 3
+#' ## performs cross-validation with specified number of folds (e.g. 3)
+#' k_cv <- 3
 #' my_rf_cv(k = k_cv)
-#'
 #' @export
 my_rf_cv <- function(k = 5) {
   if (k <= 1) {
@@ -57,7 +56,8 @@ my_rf_cv <- function(k = 5) {
     # train a random forest model with 100 trees
     # to predict body_mass_g using covariates bill_length_mm,
     # bill_depth_mm, and flipper_length_mm.
-    mrf_m <- randomForest::randomForest((body_mass_g ~ bill_length_mm + bill_depth_mm + flipper_length_mm), data = train, ntree = 100)
+    mrf_m <- randomForest::randomForest((body_mass_g ~ bill_length_mm +
+      bill_depth_mm + flipper_length_mm), data = train, ntree = 100)
     # use model to predict
     pred <- predict(mrf_m, test_cov)
 

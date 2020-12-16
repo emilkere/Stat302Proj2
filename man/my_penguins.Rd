@@ -30,7 +30,8 @@ A tibble with 344 rows and 8 variables:
 my_penguins
 }
 \description{
-Copy of penguin data from palmerpenguins package, used for demo purposes in Stat302 Project2.
+Copy of penguin data from palmerpenguins package, used for demo purposes in
+Stat302 Project2.
 }
 \details{
 Size measurements for adult foraging penguins near Palmer Station, Antarctica
