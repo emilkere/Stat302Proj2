@@ -354,7 +354,7 @@ knn_plot_data %>% ggplot(aes(
   labs(
     x = "number of neighbours", y = "Error", color = "Error Type",
     title = "Cross Validation and Traing Error from my_knn_cv",
-    caption = "Graph 5: Cross Validation and Traing Error for fitting knn, with 
+    caption = "Graph 5a: Cross Validation and Traing Error for fitting knn, with 
     different number of neighbours, using 5 fold cross validation. The x axis 
     represent the number of neighbours used in the model. Each line represents 
     different type of error - cross validation or training error"
@@ -364,10 +364,85 @@ knn_plot_data %>% ggplot(aes(
     plot.caption = element_text(hjust = 0.5)
   )
 ```
-As seen in the Graph 5 k-Nearest Neighbour with $k=1$ gives with smallest training and cross validation errors. Therefore, we recommend using the model with $k=1$ for this model.
 
-Typically $k=1$ overfits. 
+As seen in the Graph 5a k-Nearest Neighbour with $k=1$ gives with smallest training and cross validation errors. Therefore, we recommend using the model with $k=1$ for this model.
 
+Typically $k=1$ overfits and it is an indicator for dependence in the model covariates. By conducting PCA, we can verify that this is the case for our model, where there is strong correlation between `flipper_length_mm`, and `body_mass_g`. One of these can be removed from the model. Let's rerun the analysis for a simplified model with three covariates - `bill_length_mm`, `bill_depth_mm` and `flipper_length_mm`.
+
+```{r, fig.width = 7.15, fig.height=6 , echo=F}
+
+# removing NA data from my_penguins since knn does not handle correctly
+
+# using covariates bill_length_mm, bill_depth_mm,
+# flipper_length_mm
+
+peng_no_na <- my_penguins %>%
+  select(
+    species, bill_length_mm, bill_depth_mm,
+    flipper_length_mm
+  ) %>%
+  drop_na()
+
+# setup output class species
+peng_cl <- peng_no_na$species
+
+# set up train data
+peng_no_na_train <- peng_no_na %>% select(-species)
+len <- length(peng_cl)
+
+# set up 10 models 
+n_models <- 10
+knn_cv_err <- rep(0, n_models)
+knn_train_err <- rep(0, n_models)
+
+# set seed to ensure repeatability
+# set.seed(19701007)
+for (k in 1:n_models) {
+  knn_res <- my_knn_cv(peng_no_na_train, peng_cl, k_nn = k, k_cv = k_cv)
+  # store CV error
+  knn_cv_err[k] <- knn_res$cv_err
+  # compute train errror
+  knn_train_err[k] <- sum(as.integer(knn_res$class) !=
+    as.integer(peng_cl)) / len
+}
+
+# prepare plot data for CV error
+knn_plot_data <- data.frame(
+  k_nn = c(1:n_models), error = knn_cv_err,
+  err_type = rep("Cross Validation Error", n_models)
+)
+
+# prepare plot data for CV error for Training error
+knn_plot_data <- rbind(knn_plot_data, data.frame(
+  k_nn = c(1:n_models),
+  error = knn_train_err, err_type = rep("Training Error", n_models)
+))
+
+#plot
+knn_plot_data %>% ggplot(aes(
+  x = as.factor(k_nn), y = error, group = err_type,
+  col = err_type
+)) +
+  geom_line() + geom_point() +
+  scale_x_discrete(name = "number of neighbours") +
+  theme_bw(base_size = 12) +
+  labs(
+    x = "number of neighbours", y = "Error", color = "Error Type",
+    title = "Cross Validation and Traing Error from my_knn_cv",
+    caption = "Graph 5b: Cross Validation and Traing Error for fitting knn, with 
+    different number of neighbours, using 5 fold cross validation. The x axis 
+    represent the number of neighbours used in the model. Each line represents 
+    different type of error - cross validation or training error"
+  ) +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    plot.caption = element_text(hjust = 0.5)
+  )
+sort_idx <- sort(knn_cv_err, index.return = T)$ix
+idx_for_smallest_cv_m3 = sort_idx[1]
+smallest_cv_m3 = knn_cv_err[idx_for_smallest_cv_m3]
+```
+As seen in the Graph 5b k-Nearest Neighbour for the model with three covarietes performs better. It gives smaller cross validation errors for all $k$. We recommend using the model with three covariates, and $k=`r idx_for_smallest_cv_m3`$ neighbours as for that model the cross validation error is smallest.
 
 
 ## my_rf_cv tutorial
