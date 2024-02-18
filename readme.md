@@ -31,3 +31,7 @@ help(package = "Stat302Proj2", help_type = "html")
 # Use this to view the vignette as an isolated HTML file
 utils::browseVignettes(package = "Stat302Proj2")
 ```
+
+## Attribution
+
+This package redistributes data from the [Gapminder](https://www.gapminder.org/data/) project.
